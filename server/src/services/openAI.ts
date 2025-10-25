@@ -25,24 +25,42 @@ export async function streamOpenAIResponse(
   if (!OPENAI_API_KEY) {
       throw new Error("Configuration Error: OpenAI API Key is missing.");
   }
-  console.log("[streamOpenAIResponse] start");
-  console.log("[streamOpenAIResponse] userMessage:", userMessage);
-  console.log("[DEBUG] OPENAI_API_KEY exists:", OPENAI_API_KEY);
 
+  const prompt = `
+    You are a world-class, highly rigorous Korean language proofreader and editor (한국어 교정 전문가).
+    Your task is to identify and correct **every** spelling, grammar, spacing (띄어쓰기), punctuation, and stylistic error in the given text.
+    Follow the strictest rules of **standard Korean (표준어)** and **formal business/academic writing** at all times.
 
-  const prompt = `You are a professional Korean language proofreader.
-    Given a user's text, identify spelling and grammar mistakes.
-    Respond in JSON format as follows:
+    CRITICAL RULES:
+    1. Each correction must contain **only the smallest exact text span** that changed — not the whole sentence.
+      - Example: if "제안서을" → "제안서를", then only that word pair appears.
+      - Example: if a missing period should be added after "안녕하세요", use:
+        "original": "안녕하세요"
+        "corrected": "안녕하세요."
+    2. Do **NOT** include an entire sentence or paragraph inside "original" or "corrected" for punctuation or stylistic fixes.
+    3. If multiple punctuation marks are missing, create **separate entries** for each.
+    4. Never combine unrelated corrections into one block.
+    5. Return **only valid JSON** — no commentary, no markdown, no surrounding text.
+
+    REQUIREMENTS:
+    - Detect and correct all issues (spelling, grammar, spacing, punctuation, and formal tone).
+    - Do not modify text without an actual error.
+    - The final "correctedText" must fully reflect all improvements.
+    - The "reason" must **always** be written in Korean, clearly explaining the rule or reason.
+
+    OUTPUT FORMAT (strictly follow this):
+
     {
-      "correctedText": "...",
+      "correctedText": "최종 교정된 전체 문장",
       "corrections": [
         {
-          "original": "mistaken part",
-          "corrected": "corrected part",
-          "reason": "why it was corrected"
+          "original": "잘못된 부분 (최소 단위만)",
+          "corrected": "수정된 부분 (최소 단위만)",
+          "reason": "수정 이유 (항상 한국어로 작성)"
         }
       ]
-    }`;
+    }
+  `;
 
   // Build request body
   const body = {
@@ -55,10 +73,6 @@ export async function streamOpenAIResponse(
     stream: true
   };
 
-  console.log("[streamOpenAIResponse] Sending request to OpenAI...");
-  const isBrowser = typeof globalThis !== "undefined" && typeof (globalThis as any).window !== "undefined";
-  console.log("Runtime environment:", isBrowser ? "browser" : "node");
-
   // create fetch request
   const res = await fetch(OPENAI_URL, {
     method: "POST",
@@ -68,8 +82,6 @@ export async function streamOpenAIResponse(
     },
     body: JSON.stringify(body)
   });
-  console.log("Auth header:", "Bearer " + OPENAI_API_KEY.slice(0, 10) + "...");
-  console.log("[streamOpenAIResponse] Response status:", res.status);
 
   if (!res.ok || !res.body) {
     const txt = await res.text();
@@ -78,7 +90,6 @@ export async function streamOpenAIResponse(
     return;
   }
 
-  console.log("[streamOpenAIResponse] Streaming response started...");
   // Stream reader
   const reader = res.body.getReader();
   const decoder = new TextDecoder("utf-8");
