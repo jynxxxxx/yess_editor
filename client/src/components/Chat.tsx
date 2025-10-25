@@ -134,7 +134,7 @@ export default function Chat() {
                 }
               }
             }}
-            placeholder="Type your Korean text here..."
+            placeholder="문장을 입력하세요..."
             className="flex-1 px-4 py-2 border rounded-md focus:outline-none resize-none bg-gray-50 dark:bg-black/20 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
           />
           <button
@@ -153,7 +153,7 @@ export default function Chat() {
             {streaming ? (
               <span className="flex items-center gap-2"><LoadingDots /></span>
             ) : (
-              "Send"
+              "전송"
             )}
           </button>
         </div>
