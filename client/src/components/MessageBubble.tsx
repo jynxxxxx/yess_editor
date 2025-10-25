@@ -1,12 +1,16 @@
 import type { AssistantResult } from "../types";
 import { diffChars } from "diff";
 import Tooltip from "./Tooltip";
+import { UserIcon, AIIcon } from "./Icons";
 
 export function UserBubble({ text }: { text: string }) {
   return (
-    <div className="self-end max-w-[80%]">
+    <div className="self-end max-w-[80%] flex gap-2 ">
       <div className="inline-block bg-slate-700 text-white px-4 py-2 rounded-2xl shadow-sm animate-fade-in">
         {text}
+      </div>
+      <div className="self-end">
+        <UserIcon />
       </div>
     </div>
   );
@@ -130,13 +134,16 @@ export function AIBubbleFinal({
   const fixedLine = renderLine(fixedChars, fixedHighlights, false);
 
   return (
-    <div className="self-start max-w-[90%]">
+    <div className="self-start max-w-[90%] flex gap-2">
+      <div className="self-end">
+        <AIIcon />
+      </div>
       <div className="bg-neutral-100 px-4 py-3 rounded-2xl shadow-sm animate-fade-in space-y-1">
         <div className="bg-red-100 px-2 py-1 rounded-md text-neutral-900 whitespace-pre-wrap break-words">
-          {origLine}
+          - {origLine}
         </div>
         <div className="bg-green-100 px-2 py-1 rounded-md text-neutral-900 whitespace-pre-wrap break-words">
-          {fixedLine}
+          + {fixedLine}
         </div>
         <div className="mt-2 text-xs text-neutral-500 flex gap-2">
           <CopyButton text={result.correctedText} />

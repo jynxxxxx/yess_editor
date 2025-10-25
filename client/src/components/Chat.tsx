@@ -71,7 +71,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-white dark:bg-slate-900">
+    <div className="flex flex-col h-screen">
       <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center gap-4">
         <header className="flex justify-between py-4">
           <h1 className="text-lg font-semibold">Yess — Korean Spell Correction</h1>
@@ -125,7 +125,7 @@ export default function Chat() {
                 setInput(e.target.value)
                 const el = e.target;
                 el.style.height = "auto";
-                el.style.height = `${Math.min(el.scrollHeight, 192)}px`; // max ~12rem (≈9 lines)
+                el.style.height = `${Math.min(el.scrollHeight, 112)}px`; //(≈5 lines)
               }}
               disabled={streaming}
               onKeyDown={(e) => {
