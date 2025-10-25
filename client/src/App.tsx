@@ -9,13 +9,13 @@ export default function App() {
   return (
     
     <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <header className="relative p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-xl font-bold">Yess — Korean Spell Correction</h1>
+      <header className="relative pl-8 pt-4 flex justify-between items-center">
+        <h1 className="text-lg font-bold">Yess — Korean Spell Correction</h1>
         <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
-        <div className="absolute right-6 bottom-[-2rem] text-sm text-neutral-500">Model: gpt-4.1-mini</div>
+        <div className="absolute right-4 bottom-[-1.5rem] text-xs text-neutral-500">Model: gpt-4.1-mini</div>
       </header>
 
-      <main className="flex-1">
+      <main className="flex-1 flex items-center">
         <Chat />
       </main>
     </div>
