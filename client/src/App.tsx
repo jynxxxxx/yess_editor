@@ -15,7 +15,7 @@ export default function App() {
         <div className="absolute right-4 bottom-[-1.5rem] text-xs text-neutral-500">모델: gpt-4.1-mini</div>
       </header>
 
-      <main className="flex-1 flex items-center px-3 lg:px-0">
+      <main className="flex-1 flex px-3 lg:px-0">
         <Chat />
       </main>
     </div>

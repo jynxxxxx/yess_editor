@@ -71,60 +71,75 @@ export default function Chat() {
   }
 
   return (
-    <div className="max-w-4xl 2xl:max-w-[60vw] mx-auto p-4 my-4 w-full flex-1 flex flex-col justify-center gap-4 bg-slate-200 dark:bg-gray-800 rounded-lg">
-      <div ref={chatContainerRef} className="flex-1 overflow-auto flex flex-col gap-2 p-4 rounded-md border border-neutral-100 dark:border-gray-600 bg-white dark:bg-black/20 max-h-[67vh] 2xl:max-h-[75vh]">
-        <div className="flex-1 flex flex-col gap-3 w-full">
-          {messages.map((m, idx) => {
-            if (m.role === "user") return <UserBubble key={idx} text={m.text} />;
-            // assistant:
-            // Assistant streaming placeholder
-            if (m.text === "__STREAMING__") {
-              return (
-                <AIBubbleStreaming
-                  key={idx}
-                  text={currentTokens || <LoadingDots />}
-                />
-              );
-            }
+   <div className="max-w-4xl 2xl:max-w-[60vw] mx-auto my-4 flex flex-1 flex-col justify-center">
+      <div className="flex flex-col gap-4 p-4 rounded-lg bg-slate-200 dark:bg-gray-800 min-h-[80vh]">
+        <div ref={chatContainerRef} className="flex-1 overflow-auto flex flex-col gap-2 p-4 rounded-md border border-neutral-100 dark:border-gray-600 bg-white dark:bg-black/20 max-h-[67vh] 2xl:max-h-[75vh]">
+          <div className="flex-1 flex flex-col gap-3 w-full">
+            {messages.map((m, idx) => {
+              if (m.role === "user") return <UserBubble key={idx} text={m.text} />;
+              // assistant:
+              // Assistant streaming placeholder
+              if (m.text === "__STREAMING__") {
+                return (
+                  <AIBubbleStreaming
+                    key={idx}
+                    text={currentTokens || <LoadingDots />}
+                  />
+                );
+              }
 
-            // Assistant final message
-            if (m.result) {
-              // find the user message that corresponds to this AI message
-              const userMsg =
-                [...messages]
-                  .slice(0, idx)
-                  .reverse()
-                  .find((x) => x.role === "user")?.text || "";
-              return (
-                <AIBubbleFinal
-                  key={idx}
-                  userOriginal={userMsg}
-                  result={m.result}
-                />
-              );
-            }
+              // Assistant final message
+              if (m.result) {
+                // find the user message that corresponds to this AI message
+                const userMsg =
+                  [...messages]
+                    .slice(0, idx)
+                    .reverse()
+                    .find((x) => x.role === "user")?.text || "";
+                return (
+                  <AIBubbleFinal
+                    key={idx}
+                    userOriginal={userMsg}
+                    result={m.result}
+                  />
+                );
+              }
 
-            return null;
-          })}
+              return null;
+            })}
+          </div>
         </div>
-      </div>
-      
-      <div className="">
-        <div ref={newestMsgRef} />
-        <div className="flex gap-2">
-          <textarea
-            ref={textareaRef}
-            rows={1}
-            value={input}
-            onChange={(e) => {
-              setInput(e.target.value)
-              const el = e.target;
-              el.style.height = "auto";
-              el.style.height = `${Math.min(el.scrollHeight, 94)}px`; //(≈5 lines)
-            }}
-            disabled={streaming}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
+        
+        <div className="">
+          <div ref={newestMsgRef} />
+          <div className="flex gap-2">
+            <textarea
+              ref={textareaRef}
+              rows={1}
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value)
+                const el = e.target;
+                el.style.height = "auto";
+                el.style.height = `${Math.min(el.scrollHeight, 94)}px`; //(≈5 lines)
+              }}
+              disabled={streaming}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  send();
+
+                  // reset height after submit
+                  if (textareaRef.current) {
+                    textareaRef.current.style.height = "2.5rem";
+                  }
+                }
+              }}
+              placeholder="문장을 입력하세요..."
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-none resize-none bg-gray-50 dark:bg-black/20 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+            />
+            <button
+              onClick={(e) => {
                 e.preventDefault();
                 send();
 
@@ -132,30 +147,17 @@ export default function Chat() {
                 if (textareaRef.current) {
                   textareaRef.current.style.height = "2.5rem";
                 }
-              }
-            }}
-            placeholder="문장을 입력하세요..."
-            className="flex-1 px-4 py-2 border rounded-md focus:outline-none resize-none bg-gray-50 dark:bg-black/20 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
-          />
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              send();
-
-              // reset height after submit
-              if (textareaRef.current) {
-                textareaRef.current.style.height = "2.5rem";
-              }
-            }}
-            disabled={streaming || input.trim() === ""}
-            className="px-4 py-2 rounded-md bg-slate-400 dark:bg-black/40 text-white disabled:opacity-50 hover:bg-black/70"
-          >
-            {streaming ? (
-              <span className="flex items-center gap-2"><LoadingDots /></span>
-            ) : (
-              "전송"
-            )}
-          </button>
+              }}
+              disabled={streaming || input.trim() === ""}
+              className="px-4 py-2 rounded-md bg-slate-400 dark:bg-black/40 text-white disabled:opacity-50 hover:bg-black/70"
+            >
+              {streaming ? (
+                <span className="flex items-center gap-2"><LoadingDots /></span>
+              ) : (
+                "전송"
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
