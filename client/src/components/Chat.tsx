@@ -9,6 +9,8 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const { streaming, currentTokens, result, start } = useSSEChat();
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const newestMsgRef = useRef<HTMLDivElement | null>(null);
 
   // when result arrives, append assistant final and possibly show highlighted
   useEffect(() => {
@@ -29,6 +31,16 @@ export default function Chat() {
       });
     }
   }, [result]);
+
+  
+  useEffect(() => {
+    if (chatContainerRef.current && newestMsgRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: newestMsgRef.current.offsetTop,
+        behavior: "smooth",
+      });
+    }
+  }, [messages, result]);
 
   function send() {
     const trimmed = input.trim();
@@ -52,15 +64,15 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex flex-col h-screen p-6 bg-white dark:bg-slate-900">
-      <div className="max-w-3xl w-full mx-auto flex-1 flex flex-col gap-4">
-        <header className="flex items-center justify-between py-4">
-          <h1 className="text-xl font-semibold">Yess — Korean Spell Correction</h1>
+    <div className="flex flex-col h-screen bg-white dark:bg-slate-900">
+      <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center gap-4">
+        <header className="flex justify-between py-4">
+          <h1 className="text-lg font-semibold">Yess — Korean Spell Correction</h1>
           <div className="text-sm text-neutral-500">Model: gpt-4.1-mini</div>
         </header>
 
-        <main className="flex-1 overflow-auto flex flex-col gap-3 p-4 rounded-md border border-neutral-100 bg-white">
-          <div className="flex flex-col gap-3">
+        <main ref={chatContainerRef} className="w-9/10 mx-auto flex-1 overflow-auto flex flex-col gap-3 p-4 rounded-md border border-neutral-100 bg-white max-h-[70vh]">
+          <div className="flex flex-col gap-3 w-full">
             {messages.map((m, idx) => {
               if (m.role === "user") return <UserBubble key={idx} text={m.text} />;
               // assistant:
@@ -95,8 +107,9 @@ export default function Chat() {
             })}
           </div>
         </main>
-
-        <footer className="py-4">
+        
+        <footer className="py-4 w-9/10 mx-auto">
+          <div ref={newestMsgRef} />
           <div className="flex gap-2">
             <input
               ref={inputRef}
