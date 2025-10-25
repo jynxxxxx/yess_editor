@@ -2,6 +2,7 @@ import type { AssistantResult } from "../types";
 import { diffChars } from "diff";
 import Tooltip from "./Tooltip";
 import { UserIcon, AIIcon } from "./Icons";
+import CopyButton from "./CopyButton";
 
 export function UserBubble({ text }: { text: string }) {
   return (
@@ -157,14 +158,3 @@ export function AIBubbleFinal({
   );
 }
 
-function CopyButton({ text }: { text: string }) {
-  const copy = async () => {
-    await navigator.clipboard.writeText(text);
-    // small UX: show toast in production — omitted for brevity
-  };
-  return (
-    <button onClick={copy} className="text-xs underline text-neutral-500 dark:text-white/70">
-      Copy corrected text
-    </button>
-  );
-}
