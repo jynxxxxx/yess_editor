@@ -32,7 +32,7 @@ export default function Tooltip({ children, title }: { children: React.ReactNode
       {title && visible &&
         createPortal(
           <div
-            className="max-w-[20vw] text-sm bg-gray-700 dark:bg-gray-900 text-white p-3 rounded-md whitespace-pre-wrap z-50 shadow-lg"
+            className="max-w-[50vh] md:max-w-[20vw] text-sm bg-gray-700 dark:bg-gray-900 text-white p-3 rounded-md whitespace-pre-wrap z-50 shadow-lg"
             style={{
               position: "fixed",
               top: coords.top - 10, // above the element with margin

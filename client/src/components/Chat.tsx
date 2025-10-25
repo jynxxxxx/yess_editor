@@ -72,7 +72,7 @@ export default function Chat() {
 
   return (
     <div className="max-w-4xl 2xl:max-w-[60vw] mx-auto p-4 my-4 w-full flex-1 flex flex-col justify-center gap-4 bg-slate-200 dark:bg-gray-800 rounded-lg">
-      <div ref={chatContainerRef} className="flex-1 overflow-auto flex flex-col gap-2 p-4 rounded-md border border-neutral-100 dark:border-gray-600 bg-white dark:bg-black/20 max-h-[67vh]">
+      <div ref={chatContainerRef} className="flex-1 overflow-auto flex flex-col gap-2 p-4 rounded-md border border-neutral-100 dark:border-gray-600 bg-white dark:bg-black/20 max-h-[67vh] 2xl:max-h-[75vh]">
         <div className="flex-1 flex flex-col gap-3 w-full">
           {messages.map((m, idx) => {
             if (m.role === "user") return <UserBubble key={idx} text={m.text} />;
