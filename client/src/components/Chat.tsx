@@ -3,6 +3,7 @@ import { useSSEChat } from "../hooks/useSSEChat";
 import { UserBubble, AIBubbleStreaming, AIBubbleFinal } from "./MessageBubble";
 import LoadingDots from "./LoadingDots";
 import type { Message } from "../types";
+import { validateAndNotify } from "../utils/validateAndNotify";
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -45,6 +46,12 @@ export default function Chat() {
   function send() {
     const trimmed = input.trim();
     if (!trimmed) return;
+
+    if (!validateAndNotify(trimmed)) {
+      setInput("")
+      return;
+    }
+
     setMessages((m) => [...m, { role: "user", text: trimmed }]);
     // append placeholder assistant streaming message
     setMessages((m) => [...m, { role: "assistant", text: "__STREAMING__" }]);
