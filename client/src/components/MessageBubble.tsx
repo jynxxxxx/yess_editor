@@ -1,5 +1,4 @@
 import type { AssistantResult } from "../types";
-import { assemblePartsFromCorrections } from "../utils/assembleHighlightedMessage";
 import { diffChars } from "diff";
 import Tooltip from "./Tooltip";
 
