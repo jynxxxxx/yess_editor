@@ -8,7 +8,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const { streaming, currentTokens, result, start } = useSSEChat();
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const newestMsgRef = useRef<HTMLDivElement | null>(null);
 
@@ -59,7 +59,7 @@ export default function Chat() {
       });
     });
     setInput("");
-    inputRef.current?.focus();
+    textareaRef.current?.focus();
     console.log("Message sent:", messages);
   }
 
@@ -111,22 +111,40 @@ export default function Chat() {
         <footer className="py-4 w-9/10 mx-auto">
           <div ref={newestMsgRef} />
           <div className="flex gap-2">
-            <input
-              ref={inputRef}
+            <textarea
+              ref={textareaRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => {
+                setInput(e.target.value)
+                const el = e.target;
+                el.style.height = "auto";
+                el.style.height = `${Math.min(el.scrollHeight, 192)}px`; // max ~12rem (≈9 lines)
+              }}
               disabled={streaming}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   send();
+
+                  // reset height after submit
+                  if (textareaRef.current) {
+                    textareaRef.current.style.height = "2.5rem";
+                  }
                 }
               }}
               placeholder="Type your Korean text here..."
-              className="flex-1 px-4 py-2 border rounded-md focus:outline-none"
+              className="flex-1 px-4 py-2 border rounded-md focus:outline-none resize-none"
             />
             <button
-              onClick={send}
+              onClick={(e) => {
+                e.preventDefault();
+                send();
+
+                // reset height after submit
+                if (textareaRef.current) {
+                  textareaRef.current.style.height = "2.5rem";
+                }
+              }}
               disabled={streaming || input.trim() === ""}
               className="px-4 py-2 rounded-md bg-slate-800 text-white disabled:opacity-50"
             >
