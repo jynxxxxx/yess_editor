@@ -148,7 +148,7 @@ export default function Chat() {
               }
             }}
             disabled={streaming || input.trim() === ""}
-            className="px-4 py-2 rounded-md bg-slate-400 dark:bg-black/40 text-white disabled:opacity-50 hover:bg-black/50"
+            className="px-4 py-2 rounded-md bg-slate-400 dark:bg-black/40 text-white disabled:opacity-50 hover:bg-black/70"
           >
             {streaming ? (
               <span className="flex items-center gap-2"><LoadingDots /></span>
