@@ -1,8 +1,8 @@
 import type { AssistantResult } from "../types";
-import { diffChars } from "diff";
-import Tooltip from "./Tooltip";
 import { UserIcon, AIIcon } from "./Icons";
 import CopyButton from "./CopyButton";
+import renderLine from "../utils/renderLine";
+import computeHighlights from "../utils/computeHighlights";
 
 export function UserBubble({ text }: { text: string }) {
   return (
@@ -34,106 +34,10 @@ export function AIBubbleFinal({
   userOriginal: string;
   result: AssistantResult;
 }) {
-   /* -------------------------------------------------
-   * Build two arrays of React nodes:
-   * origChars  – characters of the original sentence
-   * fixedChars – characters of the corrected sentence
-   * ------------------------------------------------- */
-
-  const origChars = userOriginal.split("");
-  const fixedChars = result.correctedText.split("");
-
-  const origHighlights: (string | null)[] = Array(origChars.length).fill(null);
-  const fixedHighlights: (string | null)[] = Array(fixedChars.length).fill(null);
-
-  // Mark original mistakes
-  result.corrections.forEach((c) => {
-    for (let i = c.start; i < c.end && i < origHighlights.length; i++) {
-      origHighlights[i] = c.reason || null;
-    }
-  });
-
-  // Use diff to align original -> corrected
-  const diffs = diffChars(userOriginal, result.correctedText);
-
-  let origIdx = 0;
-  let fixedIdx = 0;
-
-  diffs.forEach((part) => {
-    if (part.added) {
-      // This text exists only in corrected string
-      for (let i = 0; i < part.value.length; i++) {
-        // If any correction affects this position, mark it
-        result.corrections.forEach((c) => {
-          const corrected = c.corrected;
-          // If this added text matches the corrected part, highlight
-          if (corrected.includes(part.value[i])) {
-            fixedHighlights[fixedIdx] = c.reason || null;
-          }
-        });
-        fixedIdx++;
-      }
-    } else if (part.removed) {
-      // Removed text exists only in original string
-      origIdx += part.count || 0;
-    } else {
-      // Unchanged text
-      for (let i = 0; i < part.value.length; i++) {
-        // Carry over highlights from original positions to fixed positions if needed
-        if (origHighlights[origIdx]) {
-          fixedHighlights[fixedIdx] = origHighlights[origIdx];
-        }
-        origIdx++;
-        fixedIdx++;
-      }
-    }
-  });
-
-  const renderLine = (chars: string[], highlights: (string | null)[], isOrig: boolean) => {
-    const elements: React.ReactNode[] = [];
-    let buffer = "";
-    let currentHighlight: string | null = null;
-
-    const pushBuffer = () => {
-      if (!buffer) return;
-      if (currentHighlight) {
-        elements.push(
-          <Tooltip key={elements.length} title={currentHighlight}>
-            <span 
-              className={`px-0.5 ${
-                isOrig
-                  ? "bg-red-400 text-white dark:bg-red-700"
-                  : "bg-green-600 text-white dark:bg-green-700"
-              }`}
-              style={{ userSelect: "text" }}
-            >
-              {buffer}
-            </span>
-          </Tooltip>
-        );
-      } else {
-        elements.push(
-          <span key={elements.length} style={{ userSelect: "text" }}>
-            {buffer}
-          </span>
-        );
-      }
-      buffer = "";
-    };
-
-    for (let i = 0; i < chars.length; i++) {
-      if (highlights[i] === currentHighlight) {
-        buffer += chars[i];
-      } else {
-        pushBuffer();
-        currentHighlight = highlights[i];
-        buffer += chars[i];
-      }
-    }
-    pushBuffer();
-
-    return elements;
-  };
+  const { origChars, fixedChars, origHighlights, fixedHighlights } = computeHighlights(
+    userOriginal,
+    result
+  );
 
   const origLine = renderLine(origChars, origHighlights, true);
   const fixedLine = renderLine(fixedChars, fixedHighlights, false);
