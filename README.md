@@ -51,7 +51,7 @@ Root uses concurrently to run both
 
 In root folder
 ```
-npm run dev
+npm run start
 ```
 
 
