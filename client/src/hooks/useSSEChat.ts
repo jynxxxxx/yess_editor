@@ -6,6 +6,7 @@ export function useSSEChat() {
   const [currentText, setCurrentText] = useState("");
   const [result, setResult] = useState<AssistantResult | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -48,6 +49,16 @@ export function useSSEChat() {
         const { value, done } = await reader.read();
         if (done) {
           break;
+        }
+
+        // reset timeout on each valid data chunk (keep-alive)
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = setTimeout(() => {
+            console.error("SSE timeout: No data received for too long");
+            if (abortRef.current) abortRef.current.abort();
+            setStreaming(false);
+          }, 60000);
         }
 
         buffer += decoder.decode(value, { stream: true });
@@ -113,6 +124,7 @@ export function useSSEChat() {
         console.error("SSE Chat error:", err);
       }
     } finally {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       setStreaming(false);
     }
   }
@@ -121,6 +133,10 @@ export function useSSEChat() {
     if (abortRef.current) {
       abortRef.current.abort();
       abortRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
     setStreaming(false);
   }
