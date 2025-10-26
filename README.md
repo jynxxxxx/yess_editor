@@ -72,6 +72,9 @@ Open [http://localhost:5173](http://localhost:5173)
 - Improve streaming parsing resilience (partial JSON tokens in stream).
 - Add unit + integration tests for server streaming and SSE handling.
 - Add language auto-detection: call a language detection model or use heuristics before sending to the proofreader system prompt.
+- Batch and flush token updates on the client (already implemented) to prevent UI lag.  
+- Handle **very long outputs** gracefully — consider partial streaming or truncation.  
+- Add **retry / resume UI** for interrupted or failed streams.  
 
 ## Example Interaction
 
