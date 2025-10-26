@@ -1,10 +1,6 @@
 import { indexCorrections } from "../utils/correctionIndexer.js";
 
-// const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
-// if (!OPENAI_API_KEY) {
-//   console.warn("OPENAI_API_KEY not set in environment");
-// }
 
 type Callbacks = {
   onToken: (chunk: string) => void;

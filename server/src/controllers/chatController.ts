@@ -2,13 +2,10 @@ import type { Request, Response } from "express";
 import { streamOpenAIResponse } from "../services/openAI.js";
 
 export const chatController = async (req: Request, res: Response) => {
-  console.log("chatController invoked");
   const { message } = req.body;
   if (!message) {
     return res.status(400).json({ error: "message is required" });
   }
-
-  console.log("chatController invoked, message:", message)
 
   // Set SSE headers
   res.setHeader("Content-Type", "text/event-stream");
