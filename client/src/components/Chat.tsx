@@ -4,11 +4,11 @@ import { UserBubble, AIBubbleStreaming, AIBubbleFinal } from "./MessageBubble";
 import LoadingDots from "./LoadingDots";
 import type { Message } from "../types";
 import { validateAndNotify } from "../utils/validateAndNotify";
-
+ 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const { streaming, currentTokens, result, start } = useSSEChat();
+  const { streaming, result, start } = useSSEChat();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const newestMsgRef = useRef<HTMLDivElement | null>(null);
@@ -58,7 +58,6 @@ export default function Chat() {
 
     start(trimmed).catch((e) => {
       console.error(e);
-      console.log(e.status)
       // replace streaming placeholder with an error message
       setMessages((m) => {
         const cleaned = m.filter((x) => x.text !== "__STREAMING__");
@@ -67,7 +66,6 @@ export default function Chat() {
     });
     setInput("");
     textareaRef.current?.focus();
-    console.log("Message sent:", messages);
   }
 
   return (
@@ -77,16 +75,13 @@ export default function Chat() {
           <div className="flex-1 flex flex-col gap-3 w-full">
             {messages.map((m, idx) => {
               if (m.role === "user") return <UserBubble key={idx} text={m.text} />;
-              // assistant:
-              // Assistant streaming placeholder
+              // assistant streaming:
               if (m.text === "__STREAMING__") {
-                return (
-                  <AIBubbleStreaming
-                    key={idx}
-                    text={currentTokens || <LoadingDots />}
-                  />
-                );
-              }
+              
+              return (
+                <AIBubbleStreaming />
+              );
+            }
 
               // Assistant final message
               if (m.result) {

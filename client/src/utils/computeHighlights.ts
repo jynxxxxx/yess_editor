@@ -41,7 +41,11 @@ export default function computeHighlights(
     } else if (part.removed) {
       // Removed text exists only in original string
       for (let i = 0; i < part.value.length; i++) {
-      origHighlights[origIdx] = "Removed";
+      const highlight = result.corrections.find((c) =>
+        c.original.includes(part.value[i])
+      )?.reason || null;
+
+      origHighlights[origIdx] = highlight;
       origIdx++;
     }
     } else {
