@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useSSEChat } from "../hooks/useSSEChat";
-import { UserBubble, AIBubbleStreaming, AIBubbleFinal } from "./MessageBubble";
+import { UserBubble, AIBubbleStreaming, AIBubbleFinal, AIBubbleError } from "./MessageBubble";
 import LoadingDots from "./LoadingDots";
 import type { Message } from "../types";
 import { validateAndNotify } from "../utils/validateAndNotify";
@@ -59,9 +59,10 @@ export default function Chat() {
     start(trimmed).catch((e) => {
       console.error(e);
       // replace streaming placeholder with an error message
+      console.log("error:", e)
       setMessages((m) => {
         const cleaned = m.filter((x) => x.text !== "__STREAMING__");
-        return [...cleaned, { role: "assistant", text: "Error streaming response." }];
+        return [...cleaned, { role: "assistant", text: "Error streaming response.", error: true }];
       });
     });
     setInput("");
@@ -77,11 +78,10 @@ export default function Chat() {
               if (m.role === "user") return <UserBubble key={idx} text={m.text} />;
               // assistant streaming:
               if (m.text === "__STREAMING__") {
-              
-              return (
-                <AIBubbleStreaming />
-              );
-            }
+                return (
+                  <AIBubbleStreaming />
+                );
+              }
 
               // Assistant final message
               if (m.result) {
@@ -97,6 +97,12 @@ export default function Chat() {
                     userOriginal={userMsg}
                     result={m.result}
                   />
+                );
+              }
+
+              if (m.error) {
+                return (
+                  <AIBubbleError text={m.text} />
                 );
               }
 

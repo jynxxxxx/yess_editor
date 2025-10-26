@@ -32,6 +32,19 @@ export function AIBubbleStreaming()  {
   );
 }
 
+export function AIBubbleError({ text }: { text: string }) {
+  return (
+    <div className="self-start max-w-[80%] flex gap-2">
+      <div className="self-end">
+        <AIIcon />
+      </div>
+      <div className="inline-block bg-neutral-100 dark:bg-gray-800 px-4 py-2 rounded-2xl shadow-sm animate-fade-in whitespace-pre-wrap break-words space-y-1">
+        {text}
+      </div>
+    </div>
+  );
+}
+
 export function AIBubbleFinal({
   userOriginal,
   result

@@ -13,5 +13,5 @@ export type AssistantResult = {
 
 export type Message = (
   | { role: "user"; text: string }
-  | { role: "assistant"; text: string; result?: AssistantResult }
+  | { role: "assistant"; text: string; result?: AssistantResult; error?: boolean }
 );

@@ -123,6 +123,7 @@ export function useSSEChat() {
       if (err.name !== "AbortError") {
         console.error("SSE Chat error:", err);
       }
+      throw err;
     } finally {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       setStreaming(false);
