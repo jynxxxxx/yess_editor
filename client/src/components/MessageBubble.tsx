@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { AssistantResult } from "../types";
 import { UserIcon, AIIcon } from "./Icons";
 import CopyButton from "./CopyButton";
@@ -39,10 +39,20 @@ export function AIBubbleFinal({
   userOriginal: string;
   result: AssistantResult;
 }) {
-  const { origChars, fixedChars, origHighlights, fixedHighlights } = computeHighlights(
-    userOriginal,
-    result
-  );
+    const { origChars, fixedChars, origHighlights, fixedHighlights } = useMemo(() => {
+    try {
+      return computeHighlights(userOriginal, result);
+    } catch (err) {
+      // Defensive fallback so UI doesn't break if computeHighlights throws.
+      console.error("computeHighlights failed:", err);
+      return {
+        origChars: [],
+        fixedChars: [],
+        origHighlights: [],
+        fixedHighlights: [],
+      } as any;
+    }
+  }, [userOriginal, (result as any).correctedText ?? (result as any).text ?? result]);
   const [showFixed, setShowFixed] = useState(false);
 
   return (
