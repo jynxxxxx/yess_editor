@@ -58,8 +58,6 @@ export default function Chat() {
 
     start(trimmed).catch((e) => {
       console.error(e);
-      // replace streaming placeholder with an error message
-      console.log("error:", e)
       setMessages((m) => {
         const cleaned = m.filter((x) => x.text !== "__STREAMING__");
         return [...cleaned, { role: "assistant", text: "Error streaming response.", error: true }];

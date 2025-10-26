@@ -22,7 +22,6 @@ export const chatController = async (req: Request, res: Response) => {
         res.write(`data: ${JSON.stringify({ chunk: tokenChunk })}\n\n`);
       },
       onResult: (parsed) => {
-        console.log(`[SSE OUT] Event: result, Data: ${JSON.stringify(parsed)}`);
         res.write(`event: result\n`);
         res.write(`data: ${JSON.stringify(parsed)}\n\n`);
       },
